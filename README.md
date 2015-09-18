@@ -7,7 +7,7 @@ It's an example of using a new feature in Qt5.5 which is filter that you can add
 and then create this filter in C++. There is an [article](https://blog.qt.io/blog/2015/03/20/introducing-video-filters-in-qt-multimedia/) 
 written by Laszlo Agocs taking about filters which can give you more depth about it.
 
-The fitler, made in this example, uses OpenCV Gaussian Blur and Canny edge detector.
+The fitler, made in this example, uses OpenCV Gaussian Blur and Canny edge detector for YUV420P camera. 
 
 here is a screenshot of the application : 
 
