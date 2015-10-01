@@ -57,17 +57,8 @@ void VideoFilter::setCannyKernelSize(int cannyKernelSize)
 
 
 FilterRunnable::FilterRunnable(VideoFilter *filter) :
-    m_filter(filter),
-    m_gaussianBlurSize(7),
-    m_gaussianBlurCoef(1.5),
-    m_cannyThreshold(0),
-    m_cannyKernelSize(3)
-
+    m_filter(filter)
 {
-    m_filter->setGaussianBlurCoef(m_gaussianBlurCoef);
-    m_filter->setGaussianBlurSize(m_gaussianBlurSize);
-    m_filter->setCannyKernelSize(m_cannyKernelSize);
-    m_filter->setCannyThreshold(m_cannyThreshold);
 }
 
 FilterRunnable::~FilterRunnable()
@@ -78,10 +69,10 @@ FilterRunnable::~FilterRunnable()
 QVideoFrame FilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, QVideoFilterRunnable::RunFlags flags)
 {
 
-    m_gaussianBlurSize = m_filter->gaussianBlurSize();
-    m_gaussianBlurCoef = m_filter->gaussianBlurCoef();
-    m_cannyKernelSize = m_filter->cannyKernelSize();
-    m_cannyThreshold = m_filter->cannyThreshold();
+    int gaussianBlurSize = m_filter->gaussianBlurSize();
+    double gaussianBlurCoef = m_filter->gaussianBlurCoef();
+    int cannyKernelSize = m_filter->cannyKernelSize();
+    double cannyThreshold = m_filter->cannyThreshold();
 
     if (!input->isValid())
         return *input;
@@ -91,8 +82,8 @@ QVideoFrame FilterRunnable::run(QVideoFrame *input, const QVideoSurfaceFormat &s
     this->deleteColorComponentFromYUV(input);
 
     cv::Mat mat(input->height(),input->width(), CV_8U, input->bits());
-    cv::GaussianBlur(mat, mat, Size(m_gaussianBlurSize,m_gaussianBlurSize), m_gaussianBlurCoef, m_gaussianBlurCoef);
-    cv::Canny(mat, mat, m_cannyThreshold, 3 * m_cannyThreshold, m_cannyKernelSize);
+    cv::GaussianBlur(mat, mat, Size(gaussianBlurSize,gaussianBlurSize), gaussianBlurCoef, gaussianBlurCoef);
+    cv::Canny(mat, mat, cannyThreshold, 3 * cannyThreshold, cannyKernelSize);
 
     input->unmap();
     return *input;

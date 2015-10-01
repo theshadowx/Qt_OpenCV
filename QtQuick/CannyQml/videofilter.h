@@ -32,8 +32,9 @@ public:
 private:
     int m_gaussianBlurSize;
     double m_gaussianBlurCoef;
-    double m_cannyThreshold;
+
     int m_cannyKernelSize;
+    double m_cannyThreshold;
 
 signals:
     void gaussianBlurSizeChanged();
@@ -42,6 +43,8 @@ signals:
     void cannyThresholdChanged();
 };
 
+
+
 class FilterRunnable : public QVideoFilterRunnable
 {
 
@@ -49,14 +52,11 @@ public:
     FilterRunnable(VideoFilter *filter);
     ~FilterRunnable();
 
-    QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags);
+    QVideoFrame run(QVideoFrame *input, const QVideoSurfaceFormat &surfaceFormat, RunFlags flags) Q_DECL_OVERRIDE;
 
 private:
     VideoFilter *m_filter;
-    int m_gaussianBlurSize;
-    float m_gaussianBlurCoef;
-    double m_cannyThreshold;
-    int m_cannyKernelSize;
+
     void deleteColorComponentFromYUV(QVideoFrame *input);
 };
 
