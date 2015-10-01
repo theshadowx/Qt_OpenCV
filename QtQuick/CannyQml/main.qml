@@ -12,6 +12,44 @@ Window {
     height : 720
     color: "#202020"
 
+    property bool cameraItemCreated: false
+    property variant cameraComponent : null;
+
+    Timer{
+        id: timer
+        interval: 1000
+        repeat: true
+        onTriggered: {
+            if(QtMultimedia.availableCameras.length >0){
+                if(!cameraItemCreated){
+                    /// Dynamic  Qml object creation
+                    var str = "CameraProcessing{id:cameraProcessing;
+                                          anchors.fill: parent;
+                                          gaussianBlurCoefValue :" + coefficient.value +
+                                          ";gaussianBlurSizeValue :" + kernelSize.value +
+                                          ";cannyThresholdValue   :" + cannyThreshold.value +
+                                          ";cannyKernelSizeValue  :" + cannyKernelSize.value +
+                                        ";}";
+
+                    cameraComponent = Qt.createQmlObject(str,cameraRect, "cameraComponent.qml");
+
+                    cameraItemCreated = true;
+                }
+
+            }else{
+                if(cameraComponent !== null){
+                    cameraComponent.destroy(1000);
+                    cameraComponent = null;
+                    cameraItemCreated = false;
+                }
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        timer.start()
+    }
+
     Rectangle{
         width: 300
         height: parent.height
@@ -35,9 +73,9 @@ Window {
 
             onValueChanged: {
                 if(value %2 != 1)
-                    value = videoFilter.gaussianBlurSize;
+                    value = cameraComponent.gaussianBlurSizeValue;
                 else
-                    videoFilter.gaussianBlurSize = value;
+                    cameraComponent.gaussianBlurSizeValue = value;
             }
         }
 
@@ -51,7 +89,7 @@ Window {
             decimals: 2
             maximumValue: 9999999
             value : 1.5
-            onValueChanged: videoFilter.gaussianBlurCoef = value
+            onValueChanged: cameraComponent.gaussianBlurCoefValue = value
         }
 
         Label {
@@ -119,7 +157,7 @@ Window {
 
             onValueChanged: {
                 if(value %2 === 1)
-                    videoFilter.cannyKernelSize = value;
+                    cameraComponent.cannyKernelSizeValue = value;
             }
         }
 
@@ -134,7 +172,7 @@ Window {
             maximumValue: 9999999
             stepSize: 1
 
-            onValueChanged: videoFilter.cannyThreshold = value
+            onValueChanged: cameraComponent.cannyThresholdValue = value
         }
 
         Label {
@@ -164,8 +202,6 @@ Window {
             font.bold: true
             font.pixelSize: 17
         }
-
-
     }
 
     Rectangle{
@@ -179,27 +215,6 @@ Window {
         anchors.left: parent.left
         anchors.top: parent.top
         id:cameraRect
-
-        Camera {
-            id: camera
-
-        }
-
-        VideoOutput {
-            anchors.fill: parent
-            source: camera
-            focus : visible // to receive focus and capture key events when visible
-            filters: [videoFilter]
-        }
-
-        VideoFilter{
-            id: videoFilter
-            gaussianBlurCoef: coefficient.value
-            gaussianBlurSize: kernelSize.value
-            cannyThreshold: cannyThreshold.value
-            cannyKernelSize: cannyKernelSize.value
-
-        }
     }
 
 }
