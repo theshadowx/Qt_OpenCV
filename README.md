@@ -9,4 +9,4 @@ written by Laszlo Agocs taking about filters which can give you more depth about
 
 The fitler, made in this example, uses OpenCV Gaussian Blur and Canny edge detector for YUV420P camera. 
 
-
+![cannyqml](https://cloud.githubusercontent.com/assets/976569/13226637/616d883a-d98a-11e5-9278-bc2d464eb8f1.jpg)
